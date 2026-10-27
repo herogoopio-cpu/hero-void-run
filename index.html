@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>HERO: VOID RUN — Pursuit Update</title>
+<style>
+:root{--cyan:#63f4ff;--purple:#a88bff;--pink:#ff548b;--gold:#ffe58a;--bg:#050813;--panel:#0b1428;--muted:#9aadc9}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#f2f7ff;font-family:Arial,Helvetica,sans-serif}body{overflow:hidden}button,select,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,select:focus-visible{outline:2px solid white;outline-offset:3px}.hidden{display:none!important}
+.screen{position:fixed;inset:0;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center;overflow:auto;background:radial-gradient(ellipse at 50% 32%,#162b4a,#0a1021 48%,#050813 82%)}
+.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:4px;font-weight:900;margin-bottom:12px}h1{font-size:clamp(42px,10vw,82px);letter-spacing:5px;margin:0;color:#e9fbff;text-shadow:0 0 18px #63f4ff55}h1 span{color:var(--cyan)}h2{font-size:clamp(28px,6vw,42px);margin:0 0 12px;letter-spacing:2px}.subtitle{color:var(--pink);letter-spacing:7px;font-weight:900;margin:10px 0 18px}.intro{color:#b7c8e3;line-height:1.7;max-width:490px;font-size:14px}.muted{font-size:12px;color:var(--muted);line-height:1.6}.panel{width:min(460px,96%);padding:20px;border-radius:16px;border:1px solid #63f4ff28;background:#091327ed;margin:12px 0}.btn{border:1px solid #63f4ff50;background:#101d35;color:#effcff;padding:12px 16px;border-radius:10px;font-size:12px;letter-spacing:1px;font-weight:900}.btn:hover{background:#1a3152;border-color:var(--cyan)}.btn.primary{background:var(--cyan);color:#04101b;border-color:var(--cyan);padding:15px 30px;font-size:14px}.btn.danger{border-color:#ff548b77;color:#ffb3c9}.btnrow{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:10px}.field{text-align:left;margin:15px 0}.field label{display:block;font-size:11px;color:#bdd0e9;letter-spacing:1.5px;font-weight:bold;margin-bottom:8px}select{width:100%;padding:12px;background:#101e37;color:white;border:1px solid #35506c;border-radius:8px}.toggle{display:flex;gap:10px;align-items:center;text-align:left;margin:13px 0;font-size:13px}.toggle input{accent-color:var(--cyan)}
+.hero-mark{width:86px;height:100px;position:relative;margin:5px auto 15px;filter:drop-shadow(0 0 12px #63f4ff30)}.hero-mark .cloak{position:absolute;left:10px;top:30px;width:66px;height:67px;background:linear-gradient(135deg,#253f62,#10182e);clip-path:polygon(22% 0,78% 0,100% 100%,0 100%)}.hero-mark .hood{position:absolute;left:13px;top:2px;width:60px;height:58px;background:linear-gradient(140deg,#365477,#111a30);clip-path:polygon(50% 0,95% 30%,85% 88%,50% 100%,15% 88%,5% 30%)}.hero-mark .face{position:absolute;left:24px;top:30px;width:38px;height:22px;background:#050b17;clip-path:polygon(8% 0,92% 0,100% 70%,50% 100%,0 70%)}.hero-mark .visor{position:absolute;left:27px;top:37px;width:32px;height:5px;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+#gameScreen{position:fixed;inset:0;background:#050813;overflow:hidden;touch-action:none}#gameCanvas{width:100%;height:100%;display:block}
+#hud{position:absolute;z-index:3;left:0;right:0;top:0;padding:10px 12px;display:flex;align-items:flex-start;gap:7px;justify-content:space-between;pointer-events:none}.hudbox{background:#071126e8;border:1px solid #63f4ff2a;border-radius:9px;padding:7px 10px;min-width:58px;text-align:left}.hudbox .label{font-size:9px;letter-spacing:1px;color:#8ea7c5}.hudbox .value{font-size:16px;color:#eafaff;font-weight:900;margin-top:3px}.hudbox.score .value{color:var(--cyan)}#pauseBtn{pointer-events:auto;padding:8px 11px}
+#chaseBarWrap{position:absolute;top:78px;left:50%;transform:translateX(-50%);width:min(360px,68vw);z-index:3;text-align:center;pointer-events:none}.barlabel{font-size:9px;letter-spacing:2px;color:#ff9ab7;font-weight:bold;margin-bottom:5px}.bar{height:7px;background:#251427;border:1px solid #ff548b55;border-radius:99px;overflow:hidden}.bar>div{height:100%;width:15%;background:linear-gradient(90deg,#ff548b,#ffb36b);transition:width .12s}
+#touchControls{position:absolute;z-index:3;bottom:max(14px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;padding:0 8px}.touchbtn{min-width:54px;height:48px;border-radius:12px;border:1px solid #63f4ff66;color:#eafaff;background:#09172bdb;font-size:19px;font-weight:900}.touchbtn.skill{min-width:72px;font-size:10px;letter-spacing:.5px;color:var(--cyan)}.touchbtn:disabled{opacity:.35}
+#pauseOverlay{position:absolute;inset:0;z-index:5;background:#030711ef;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}#pauseOverlay h2{color:var(--cyan)}
+#toast{position:absolute;top:112px;left:0;right:0;text-align:center;z-index:4;color:var(--cyan);font-size:13px;font-weight:900;text-shadow:0 0 10px #63f4ff66;pointer-events:none}
+.scoreline{display:flex;justify-content:space-between;gap:15px;padding:12px 3px;border-bottom:1px solid #ffffff12;font-size:13px}.scoreline strong{color:var(--cyan)}
+@media(max-width:520px){#hud{padding:7px 5px;gap:4px}.hudbox{min-width:0;padding:6px 7px}.hudbox .label{font-size:7px;letter-spacing:.5px}.hudbox .value{font-size:13px}#chaseBarWrap{top:70px}.touchbtn{height:44px;min-width:47px}.touchbtn.skill{min-width:64px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<section class="screen" id="homeScreen">
+  <div class="eyebrow">A LIGHTWEIGHT ENDLESS CHASE</div><div class="hero-mark" aria-hidden="true"><div class="cloak"></div><div class="hood"></div><div class="face"></div><div class="visor"></div></div>
+  <h1>HERO<span>:</span></h1><div class="subtitle">VOID RUN</div>
+  <p class="intro">Something escaped from the Void. It is right behind you. Dodge hazards, collect energy, and use your abilities to stay ahead.</p>
+  <div class="panel"><div class="field"><label for="playerName">RUNNER NAME</label><input id="playerName" maxlength="18" autocomplete="nickname" placeholder="Enter your name" style="width:100%;padding:12px;background:#101e37;color:white;border:1px solid #35506c;border-radius:8px"></div><div class="muted">PERSONAL BEST</div><div id="homeBest" style="font-size:34px;font-weight:1000;color:var(--cyan);margin:8px">0</div><div id="homeRuns" class="muted">Your journey starts here.</div></div>
+  <button class="btn primary" id="playBtn">▶ START RUN</button><div class="btnrow"><button class="btn" id="boardBtn">🏆 LEADERBOARD</button><button class="btn" id="settingsBtn">⚙ SETTINGS</button><button class="btn" id="helpBtn">HOW TO PLAY</button></div>
+  <p class="muted">Move: ← → / A D · Dash: SPACE · Shield: Q · Magnet: E · Slow time: R · Pause: P / ESC</p>
+</section>
+<section class="screen hidden" id="settingsScreen"><div class="eyebrow">CONFIGURE YOUR RUN</div><h2>SETTINGS</h2><div class="panel">
+<div class="field"><label for="difficulty">DIFFICULTY</label><select id="difficulty"><option value="relaxed">Relaxed — slower chase</option><option value="normal">Normal — balanced</option><option value="hard">Hard — aggressive chase</option></select></div>
+<label class="toggle"><input type="checkbox" id="reduced" checked> Reduce particles and glow effects</label><label class="toggle"><input type="checkbox" id="sound"> Enable simple sound effects</label><p class="muted">Settings save in this browser. The game uses simple Canvas drawings and no external assets.</p></div><div class="btnrow"><button class="btn primary" id="saveSettings">SAVE SETTINGS</button><button class="btn" data-home>BACK HOME</button></div></section>
+<section class="screen hidden" id="helpScreen"><div class="eyebrow">SURVIVAL PROTOCOL</div><h2>HOW TO PLAY</h2><div class="panel" style="text-align:left">
+<p><b style="color:var(--cyan)">MOVE</b><br>Use ← / → or A / D to switch between three lanes.</p>
+<p><b style="color:var(--cyan)">DASH — SPACE</b><br>Quickly surge forward and ignore collisions briefly.</p>
+<p><b style="color:var(--cyan)">SHIELD — Q</b><br>Activate a shield that absorbs one hit. Cooldown applies.</p>
+<p><b style="color:var(--cyan)">MAGNET — E</b><br>Attract nearby shards for a few seconds.</p>
+<p><b style="color:var(--cyan)">TIME SLOW — R</b><br>Slow obstacles and the pursuer temporarily.</p>
+<p><b style="color:var(--pink)">THE PURSUER</b><br>The creature creeps closer over time and surges when you get hit. Collect shards and keep dodging to push it back. If it catches you, the run ends.</p>
+<p><b style="color:var(--gold)">PICKUPS</b><br>Gold shards increase score and distance. Green cores restore health. Blue orbs refill skill energy.</p></div><button class="btn primary" data-home>BACK HOME</button></section>
+<section class="screen hidden" id="leaderboardScreen"><div class="eyebrow">RUNNERS ARCHIVE</div><h2>LEADERBOARD</h2><div class="panel"><div class="muted">TOP SCORES ON THIS DEVICE · HIGHEST FIRST</div><div id="leaderboardRows"></div><p class="muted">Scores are saved locally in this browser.</p></div><button class="btn primary" data-home>BACK HOME</button></section>
+<section id="gameScreen" class="hidden">
+<canvas id="gameCanvas"></canvas><div id="hud">
+<div class="hudbox score"><div class="label">SCORE</div><div class="value" id="hudScore">0</div></div>
+<div class="hudbox"><div class="label">HEALTH</div><div class="value" id="hudHealth">♥ ♥ ♥</div></div>
+<div class="hudbox"><div class="label">SHARDS</div><div class="value" id="hudShards">0</div></div>
+<div class="hudbox"><div class="label">COMBO</div><div class="value" id="hudCombo">x1</div></div><div class="hudbox"><div class="label">THREAT</div><div class="value" id="hudThreat">LOW</div></div><button class="btn" id="pauseBtn">Ⅱ</button></div>
+<div id="chaseBarWrap"><div class="barlabel">VOID PURSUER — DISTANCE</div><div class="bar"><div id="chaseFill"></div></div></div><div id="toast"></div>
+<div id="touchControls"><button class="touchbtn" id="leftBtn">◀</button><button class="touchbtn skill" id="dashBtn">⚡ DASH</button><button class="touchbtn skill" id="shieldBtn">◇ SHIELD</button><button class="touchbtn skill" id="magnetBtn">✦ MAGNET</button><button class="touchbtn skill" id="slowBtn">◷ SLOW</button><button class="touchbtn" id="rightBtn">▶</button></div>
+<div id="pauseOverlay" class="hidden"><div class="eyebrow">SIMULATION SUSPENDED</div><h2>PAUSED</h2><p class="muted">The pursuer can wait. For now.</p><button class="btn primary" id="resumeBtn">▶ RESUME</button><div class="btnrow"><button class="btn" id="restartBtn">RESTART RUN</button><button class="btn danger" id="quitBtn">QUIT TO HOME</button></div></div>
+</section>
+<section class="screen hidden" id="gameOverScreen"><div class="eyebrow">PURSUER CAUGHT YOU</div><h2>RUN ENDED</h2><p class="intro" id="overMessage">The Void caught up.</p><div class="panel"><div class="muted">FINAL SCORE</div><div id="finalScore" style="font-size:46px;color:var(--cyan);font-weight:1000;margin:8px">0</div><div class="scoreline"><span>Best score</span><strong id="finalBest">0</strong></div><div class="scoreline"><span>Energy shards</span><strong id="finalShards">0</strong></div><div class="scoreline"><span>Survival time</span><strong id="finalTime">0:00</strong></div></div><button class="btn primary" id="againBtn">↻ RUN AGAIN</button><div class="btnrow"><button class="btn" id="overBoardBtn">🏆 LEADERBOARD</button><button class="btn" data-home>HOME</button></div></section>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),canvas=$('gameCanvas'),ctx=canvas.getContext('2d',{alpha:false});
+const screenIds=['homeScreen','settingsScreen','helpScreen','leaderboardScreen','gameScreen','gameOverScreen'];
+const defaults={difficulty:'relaxed',reduced:true,sound:false};let settings={...defaults};
+try{settings={...defaults,...JSON.parse(localStorage.getItem('heroVoidSettings')||'{}')}}catch(e){}
+let best=Number(localStorage.getItem('heroVoidBest')||0),runs=[];try{runs=JSON.parse(localStorage.getItem('heroVoidRuns')||'[]');if(!Array.isArray(runs))runs=[]}catch(e){}
+let W=800,H=600,dpr=1,state='home',raf=0,last=0,elapsed=0,score=0,shards=0,health=3,lane=1,playerX=0,playerY=0;
+let obstacles=[],pickups=[],particles=[],stars=[],spawnTimer=0,pickTimer=0,roadOffset=0,shake=0;
+let dashTime=0,dashCD=0,shieldTime=0,shieldCD=0,magnetTime=0,magnetCD=0,slowTime=0,slowCD=0,invuln=0,pursuit=.13,toastTime=0,audio=null;
+let playerName='Runner',combo=1,comboTimer=0,lastMilestone=0,nearMisses=0;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rand=(a,b)=>a+Math.random()*(b-a),laneX=n=>W/2+(n-1)*Math.min(W*.235,145);
+function save(){try{localStorage.setItem('heroVoidSettings',JSON.stringify(settings));localStorage.setItem('heroVoidBest',String(best));localStorage.setItem('heroVoidRuns',JSON.stringify(runs));localStorage.setItem('heroVoidPlayerName',playerName)}catch(e){}}
+function show(id){screenIds.forEach(s=>$(s).classList.toggle('hidden',s!==id));if(id==='gameScreen')resize()}
+function home(){stop();show('homeScreen');updateHome()}
+function updateHome(){
+  $('homeBest').textContent=Math.floor(best).toLocaleString();
+  $('homeRuns').textContent=runs.length?`${runs.length} saved runs · Beat your record.`:'Your journey starts here.';
+  const nameInput=$('playerName'); if(nameInput && !nameInput.value) nameInput.value=playerName;
+}
+function loadSettings(){ $('difficulty').value=settings.difficulty;$('reduced').checked=settings.reduced;$('sound').checked=settings.sound}
+function saveSettings(){settings={difficulty:$('difficulty').value,reduced:$('reduced').checked,sound:$('sound').checked};save();home()}
+function leaderboard(){const box=$('leaderboardRows');box.replaceChildren();if(!runs.length){box.textContent='No runs recorded yet. Start your first run!';box.className='muted'}else{box.className='';runs.slice(0,10).forEach((r,i)=>{const row=document.createElement('div');row.className='scoreline';const a=document.createElement('span'),b=document.createElement('strong');a.textContent=`${String(i+1).padStart(2,'0')} · ${r.name||'Runner'} · ${r.date||'Saved run'}`;b.textContent=Math.floor(r.score).toLocaleString();row.append(a,b);box.append(row)})}show('leaderboardScreen')}
+function resize(){const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;W=r.width;H=r.height;dpr=Math.min(devicePixelRatio||1,1.35);canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);playerY=H*.75;if(!playerX)playerX=laneX(lane);stars=Array.from({length:42},()=>({x:Math.random()*W,y:Math.random()*H,s:rand(.4,1.5),d:rand(.2,.8)}))}
+function sound(freq=440,dur=.07){if(!settings.sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=freq;g.gain.value=.025;g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
+function say(msg){$('toast').textContent=msg;toastTime=1100}
+function burst(x,y,color,n=7){if(settings.reduced)n=Math.min(n,4);for(let i=0;i<n;i++)particles.push({x,y,vx:rand(-80,80),vy:rand(-100,60),life:.35,max:.35,color,s:rand(2,3.5)});if(particles.length>70)particles.splice(0,particles.length-70)}
+function move(d){if(state==='playing')lane=clamp(lane+d,0,2)}
+function dash(){if(state!=='playing'||dashCD>0)return;dashTime=650;dashCD=3600;invuln=Math.max(invuln,650);comboTimer=Math.max(comboTimer,1000);pursuit=Math.max(0,pursuit-.065);burst(playerX,playerY,'#63f4ff',10);say('DASH — BREAK AWAY!');sound(650,.12)}
+function shield(){if(state!=='playing'||shieldCD>0)return;shieldTime=5200;shieldCD=10500;say('SHIELD ONLINE');sound(520,.1)}
+function magnet(){if(state!=='playing'||magnetCD>0)return;magnetTime=6500;magnetCD=12500;say('ENERGY MAGNET ACTIVE');sound(720,.1)}
+function slow(){if(state!=='playing'||slowCD>0)return;slowTime=4000;slowCD=11500;pursuit=Math.max(0,pursuit-.025);say('TIME SLOW — MOVE!');sound(380,.13)}
+function pause(){if(state==='playing'){state='paused';$('pauseOverlay').classList.remove('hidden');cancelAnimationFrame(raf)}else if(state==='paused'){$('pauseOverlay').classList.add('hidden');state='playing';last=performance.now();raf=requestAnimationFrame(loop)}}
+function start(){
+  cancelAnimationFrame(raf);
+  const typed=($('playerName').value||'').trim().replace(/[<>]/g,'').slice(0,18);
+  playerName=typed||'Runner';$('playerName').value=playerName;save();
+  show('gameScreen');$('pauseOverlay').classList.add('hidden');state='playing';
+  elapsed=score=shards=0;health=3;lane=1;resize();playerX=laneX(1);
+  obstacles=[];pickups=[];particles=[];spawnTimer=700;pickTimer=850;roadOffset=0;
+  dashTime=dashCD=shieldTime=shieldCD=magnetTime=magnetCD=slowTime=slowCD=invuln=0;
+  pursuit=.12;shake=0;combo=1;comboTimer=0;lastMilestone=0;nearMisses=0;
+  last=performance.now();hud();raf=requestAnimationFrame(loop)
+}
+function stop(){state='home';cancelAnimationFrame(raf);$('pauseOverlay').classList.add('hidden')}
+function end(){if(state!=='playing')return;state='over';cancelAnimationFrame(raf);runs.push({name:playerName,score:Math.floor(score),shards,date:new Date().toLocaleDateString()});runs.sort((a,b)=>b.score-a.score);runs=runs.slice(0,10);if(score>best)best=Math.floor(score);save();$('finalScore').textContent=Math.floor(score).toLocaleString();$('finalBest').textContent=best.toLocaleString();$('finalShards').textContent=shards;let s=Math.floor(elapsed/1000);$('finalTime').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;$('overMessage').textContent=score>=best&&score>0?'New personal best! You escaped longer than ever.':'The pursuer caught your trail. Try another run.';updateHome();show('gameOverScreen')}
+function hud(){
+  $('hudScore').textContent=Math.floor(score).toLocaleString();
+  $('hudHealth').textContent=health?'♥ '.repeat(health).trim():'—';
+  $('hudShards').textContent=shards;
+  $('hudCombo').textContent=`x${combo}`;
+  $('hudThreat').textContent=score<500?'LOW':score<1500?'RISING':score<3000?'HIGH':'VOID';
+  $('chaseFill').style.width=`${Math.round(pursuit*100)}%`;
+  [['dashBtn',dashCD],['shieldBtn',shieldCD],['magnetBtn',magnetCD],['slowBtn',slowCD]].forEach(([id,cd])=>$(id).disabled=cd>0)
+}
+function spawnObstacle(){let n=Math.floor(Math.random()*3),types=['spike','laser','mine','rift'];obstacles.push({lane:n,y:-45,type:types[Math.floor(Math.random()*types.length)],hit:false,phase:Math.random()*6});if(score>450&&Math.random()<.22){let other=(n+1+Math.floor(Math.random()*2))%3;obstacles.push({lane:other,y:-rand(105,155),type:types[Math.floor(Math.random()*types.length)],hit:false,phase:0})}}
+function spawnPickup(){let r=Math.random(),type=r<.73?'shard':r<.88?'heart':'orb';pickups.push({lane:Math.floor(Math.random()*3),y:-25,type,phase:Math.random()*6})}
+function damage(o){if(invuln>0||dashTime>0)return;if(shieldTime>0){shieldTime=0;o.hit=true;o.y=H+100;burst(playerX,playerY,'#63f4ff',8);say('SHIELD BLOCKED HIT');sound(580,.1);return}health--;invuln=1000;pursuit=Math.min(1,pursuit+.22);shake=settings.reduced?0:6;burst(playerX,playerY,'#ff548b',9);sound(130,.15);o.hit=true;o.y=H+100;if(health<=0){end();return}}
+function update(dt){
+let sec=dt/1000;elapsed+=dt;
+const baseDiff=settings.difficulty==='relaxed'?1:settings.difficulty==='hard'?1.65:1.28;
+// Point-based escalation: every 500 points adds speed and tighter obstacle spacing.
+const tier=Math.min(8,Math.floor(score/500));
+const ramp=1+tier*.075;
+let diff=baseDiff*ramp;
+let slowFactor=slowTime>0?.52:1;
+let speed=(175*diff+Math.min(245*diff,score*.032))*slowFactor;
+score+=dt*(settings.difficulty==='relaxed'?.012:.016)*(1+Math.min(1.1,tier*.10))*combo;
+if(comboTimer>0){comboTimer-=dt;if(comboTimer<=0)combo=1}
+if(tier>lastMilestone){lastMilestone=tier;say(tier===1?'THREAT RISING — THE VOID IS ADAPTING!':tier===3?'THE PURSUER IS GETTING FASTER!':tier===5?'CRITICAL SPEED — KEEP MOVING!':`THREAT LEVEL ${tier+1}`)}for(let k of ['dashTime','dashCD','shieldTime','shieldCD','magnetTime','magnetCD','slowTime','slowCD','invuln'])window[k]=Math.max(0,window[k]-dt);
+dashTime=Math.max(0,dashTime-dt);dashCD=Math.max(0,dashCD-dt);shieldTime=Math.max(0,shieldTime-dt);shieldCD=Math.max(0,shieldCD-dt);magnetTime=Math.max(0,magnetTime-dt);magnetCD=Math.max(0,magnetCD-dt);slowTime=Math.max(0,slowTime-dt);slowCD=Math.max(0,slowCD-dt);invuln=Math.max(0,invuln-dt);
+let target=laneX(lane);playerX+=(target-playerX)*Math.min(1,dt*.014);roadOffset=(roadOffset+speed*sec)%65;
+let relaxed=settings.difficulty==='relaxed';spawnTimer-=dt;pickTimer-=dt;if(spawnTimer<=0){
+  spawnObstacle();
+  const baseSpawn=relaxed?1280:settings.difficulty==='hard'?760:980;
+  const tier=Math.min(8,Math.floor(score/500));
+  spawnTimer=Math.max(relaxed?610:340,baseSpawn-tier*62-score*.055)+rand(-55,90)
+}if(pickTimer<=0){spawnPickup();pickTimer=rand(720,1250)}
+// The pursuer gradually closes in; dodging and collecting shards push it back.
+pursuit+=sec*(.014+(settings.difficulty==='hard'?.012:0));if(slowTime>0)pursuit-=sec*.012;
+for(let o of obstacles){
+  const oldY=o.y;o.y+=speed*sec;o.phase+=sec*3;
+  if(o.lane===lane&&Math.abs(o.y-playerY)<28&&!o.hit)damage(o);
+  // A close pass in another lane rewards precise movement.
+  if(!o.hit&&!o.nearAward&&o.lane!==lane&&oldY<playerY-22&&o.y>=playerY-22&&o.y<playerY+16){
+    o.nearAward=true;nearMisses++;combo=Math.min(5,combo+1);comboTimer=2400;
+    score+=18*combo;pursuit=Math.max(0,pursuit-.018);say(`CLOSE CALL! COMBO x${combo}`);burst(laneX(o.lane),o.y,'#a88bff',4)
+  }
+}obstacles=obstacles.filter(o=>o.y<H+90&&!o.hit);
+for(let c of pickups){c.y+=speed*sec;c.phase+=sec*4;if(magnetTime>0&&c.type==='shard'&&c.y>H*.25){let dx=laneX(c.lane)-playerX;if(Math.abs(dx)<Math.min(W*.35,240)){c.lane=lane;c.y-=speed*sec*.6}}if(c.lane===lane&&Math.abs(c.y-playerY)<32&&!c.got){c.got=true;if(c.type==='shard'){shards++;combo=Math.min(5,combo+1);comboTimer=3000;score+=35*combo;pursuit=Math.max(0,pursuit-.035);burst(laneX(c.lane),c.y,'#ffe58a',6);sound(850,.06)}else if(c.type==='heart'){health=Math.min(3,health+1);pursuit=Math.max(0,pursuit-.04);burst(laneX(c.lane),c.y,'#71ffad',7);say('HEALTH RESTORED')}else{dashCD=Math.max(0,dashCD-1600);shieldCD=Math.max(0,shieldCD-1600);magnetCD=Math.max(0,magnetCD-1600);slowCD=Math.max(0,slowCD-1600);pursuit=Math.max(0,pursuit-.08);burst(laneX(c.lane),c.y,'#63f4ff',8);say('SKILL ENERGY +')} }}pickups=pickups.filter(c=>c.y<H+50&&!c.got);for(let p of particles){p.x+=p.vx*sec;p.y+=p.vy*sec;p.life-=sec}particles=particles.filter(p=>p.life>0);for(let s of stars){s.y+=(18+s.d*38)*sec;if(s.y>H){s.y=0;s.x=Math.random()*W}}
+if(pursuit>=1){end();return}if(toastTime>0){toastTime-=dt;if(toastTime<=0)$('toast').textContent=''}hud()}
+function drawHero(){let x=playerX,y=playerY,r=Math.sin(elapsed*.018);ctx.save();ctx.translate(x,y);if(dashTime>0){ctx.fillStyle='#63f4ff25';ctx.beginPath();ctx.ellipse(0,5,30,50,0,0,Math.PI*2);ctx.fill()}if(invuln>0&&Math.floor(elapsed/90)%2===0)ctx.globalAlpha=.5;
+ctx.fillStyle='#0008';ctx.beginPath();ctx.ellipse(0,31,24,7,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#304966';ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-8,15);ctx.lineTo(-12+r*6,31);ctx.stroke();ctx.beginPath();ctx.moveTo(8,15);ctx.lineTo(12-r*6,31);ctx.stroke();
+ctx.fillStyle='#172841';ctx.strokeStyle='#4a7896';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(-17,-12);ctx.lineTo(-22,23);ctx.lineTo(-9,18);ctx.lineTo(0,26);ctx.lineTo(10,18);ctx.lineTo(22,23);ctx.lineTo(17,-12);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#ff548b';ctx.beginPath();ctx.moveTo(8,-5);ctx.lineTo(30,r*2);ctx.lineTo(43,12+r*3);ctx.lineTo(22,8);ctx.closePath();ctx.fill();ctx.fillStyle='#263d5b';ctx.beginPath();ctx.moveTo(0,-36);ctx.lineTo(18,-23);ctx.lineTo(16,-4);ctx.lineTo(0,8);ctx.lineTo(-16,-4);ctx.lineTo(-18,-23);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#030914';ctx.fillRect(-12,-20,24,13);ctx.fillStyle='#63f4ff';ctx.fillRect(-10,-16,20,4);ctx.fillStyle='#63f4ff';ctx.beginPath();ctx.arc(0,9,3,0,Math.PI*2);ctx.fill();if(shieldTime>0){ctx.strokeStyle='#63f4ff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,32,43,0,0,Math.PI*2);ctx.stroke()}ctx.restore()}
+function drawPursuer(){let x=W/2,y=H+15-pursuit*H*.52;ctx.save();ctx.translate(x,y);let pulse=Math.sin(elapsed*.009)*3;ctx.globalAlpha=.65+pursuit*.3;ctx.fillStyle='#250d31';ctx.strokeStyle='#ff548b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-32,22);ctx.lineTo(-23,-20);ctx.lineTo(-12,-8);ctx.lineTo(0,-34-pulse);ctx.lineTo(12,-8);ctx.lineTo(25,-20);ctx.lineTo(33,22);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#ff548b';ctx.fillRect(-14,-5,8,4);ctx.fillRect(6,-5,8,4);ctx.fillStyle='#ff548b22';ctx.beginPath();ctx.ellipse(0,0,48,55,0,0,Math.PI*2);ctx.fill();ctx.restore()}
+function drawObstacle(o){let x=laneX(o.lane),y=o.y;ctx.save();ctx.translate(x,y);if(o.type==='spike'){ctx.fillStyle='#7252b7';ctx.strokeStyle='#d7baff';ctx.beginPath();ctx.moveTo(-25,16);ctx.lineTo(-12,-17);ctx.lineTo(0,8);ctx.lineTo(12,-22);ctx.lineTo(27,16);ctx.closePath();ctx.fill();ctx.stroke()}else if(o.type==='laser'){ctx.fillStyle='#491b40';ctx.fillRect(-31,-16,62,32);ctx.fillStyle='#ff548b';ctx.fillRect(-31,-3,62,6);ctx.fillStyle='#9a4e9d';ctx.fillRect(-35,-20,7,40);ctx.fillRect(28,-20,7,40)}else if(o.type==='mine'){ctx.fillStyle='#713c35';ctx.strokeStyle='#ffad69';ctx.beginPath();ctx.arc(0,0,19,0,Math.PI*2);ctx.fill();ctx.stroke();for(let i=0;i<8;i++){let a=i*Math.PI/4;ctx.beginPath();ctx.moveTo(Math.cos(a)*14,Math.sin(a)*14);ctx.lineTo(Math.cos(a)*24,Math.sin(a)*24);ctx.stroke()}}else{ctx.fillStyle='#382d70';ctx.strokeStyle='#a78bff';ctx.beginPath();ctx.ellipse(0,0,30,19,Math.sin(o.phase)*.1,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle='#63f4ff';ctx.beginPath();ctx.ellipse(0,0,17,9,0,0,Math.PI*2);ctx.stroke()}ctx.restore()}
+function drawPickup(c){let x=laneX(c.lane),y=c.y+Math.sin(c.phase)*3;ctx.save();ctx.translate(x,y);if(c.type==='heart'){ctx.fillStyle='#71ffad';ctx.fillRect(-9,-3,18,6);ctx.fillRect(-3,-9,6,18)}else if(c.type==='orb'){ctx.fillStyle='#63f4ff';ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#eaffff';ctx.fillRect(-3,-3,6,6)}else{ctx.rotate(Math.PI/4);ctx.fillStyle='#ffe58a';ctx.fillRect(-7,-7,14,14);ctx.fillStyle='#fff8d5';ctx.fillRect(-3,-3,6,6)}ctx.restore()}
+function draw(){ctx.save();if(!settings.reduced&&shake>0)ctx.translate(rand(-shake,shake),rand(-shake,shake));ctx.fillStyle='#050813';ctx.fillRect(0,0,W,H);let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#101b39');g.addColorStop(.55,'#091329');g.addColorStop(1,'#050813');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let s of stars){ctx.globalAlpha=.3+s.d*.7;ctx.fillStyle='#83eaff';ctx.fillRect(s.x,s.y,s.s,s.s)}ctx.globalAlpha=1;
+let horizon=H*.22;ctx.fillStyle='#080e20';ctx.beginPath();ctx.moveTo(W*.43,horizon);ctx.lineTo(W*.57,horizon);ctx.lineTo(W*.99,H);ctx.lineTo(W*.01,H);ctx.closePath();ctx.fill();ctx.strokeStyle='#63f4ff35';for(let i=0;i<=3;i++){let top=W/2+(i-1.5)*W*.045,bottom=W/2+(i-1.5)*Math.min(W*.25,145);ctx.beginPath();ctx.moveTo(top,horizon);ctx.lineTo(bottom,H);ctx.stroke()}for(let i=0;i<9;i++){let t=((i*70+roadOffset)%630)/630,y=horizon+(H-horizon)*t,half=W*.07+(W*.43-W*.07)*t;ctx.strokeStyle=`rgba(99,244,255,${.04+t*.1})`;ctx.beginPath();ctx.moveTo(W/2-half,y);ctx.lineTo(W/2+half,y);ctx.stroke()}
+drawPursuer();obstacles.forEach(drawObstacle);pickups.forEach(drawPickup);for(let p of particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,p.s,p.s)}ctx.globalAlpha=1;drawHero();if(magnetTime>0){ctx.strokeStyle='#63f4ff55';ctx.beginPath();ctx.arc(playerX,playerY,Math.min(W*.35,240),0,Math.PI*2);ctx.stroke()}ctx.restore()}
+function loop(t){if(state!=='playing')return;let dt=Math.min(40,Math.max(0,t-last));last=t;update(dt);if(state==='playing'){draw();raf=requestAnimationFrame(loop)}}
+$('playBtn').onclick=start;$('againBtn').onclick=start;$('settingsBtn').onclick=()=>{loadSettings();show('settingsScreen')};$('helpBtn').onclick=()=>show('helpScreen');$('boardBtn').onclick=leaderboard;$('overBoardBtn').onclick=leaderboard;$('saveSettings').onclick=saveSettings;document.querySelectorAll('[data-home]').forEach(b=>b.onclick=home);$('pauseBtn').onclick=pause;$('resumeBtn').onclick=pause;$('restartBtn').onclick=start;$('quitBtn').onclick=home;$('leftBtn').onpointerdown=e=>{e.preventDefault();move(-1)};$('rightBtn').onpointerdown=e=>{e.preventDefault();move(1)};$('dashBtn').onpointerdown=e=>{e.preventDefault();dash()};$('shieldBtn').onpointerdown=e=>{e.preventDefault();shield()};$('magnetBtn').onpointerdown=e=>{e.preventDefault();magnet()};$('slowBtn').onpointerdown=e=>{e.preventDefault();slow()};
+document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.repeat&&['ArrowLeft','ArrowRight',' ','a','d','A','D'].includes(e.key))return;if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1);if(e.code==='Space')dash();if(e.key.toLowerCase()==='q')shield();if(e.key.toLowerCase()==='e')magnet();if(e.key.toLowerCase()==='r')slow();if(e.key.toLowerCase()==='p'||e.key==='Escape')pause()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')pause()});window.addEventListener('resize',()=>{resize();if(state==='playing')draw()});loadSettings();try{playerName=localStorage.getItem('heroVoidPlayerName')||'Runner'}catch(e){playerName='Runner'}$('playerName').value=playerName;resize();updateHome();show('homeScreen');
+})();
+</script>
+</body>
+</html>
